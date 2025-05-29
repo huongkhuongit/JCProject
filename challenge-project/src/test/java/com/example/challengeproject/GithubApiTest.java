@@ -1,13 +1,14 @@
 package com.example.challengeproject;
 
+import com.example.challengeproject.api.github.models.GitHubRepo;
+import com.google.gson.Gson;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.stream.Collectors;
 
 public class GithubApiTest {
 
@@ -16,52 +17,43 @@ public class GithubApiTest {
 
     @Test
     public void testGitHubOrganizationRepos() {
-        // Gọi API lấy tất cả repo
         Response response = RestAssured
                 .given()
                 .baseUri(BASE_URL)
                 .when()
-                .get("/orgs/" + ORG + "/repos?per_page=100") // lấy tối đa 100 repo
+                .get("/orgs/" + ORG + "/repos?per_page=100")
                 .then()
                 .statusCode(200)
                 .extract().response();
 
-        List<Map<String, Object>> repos = response.jsonPath().getList("");
+        Gson gson = new Gson();
+        List<GitHubRepo> gitHubRepoList = Arrays.asList(gson.fromJson(response.asString(), GitHubRepo[].class));
 
-        int totalOpenIssues = 0;
-        Map<String, Object> mostWatchedRepo = null;
-        int maxWatchers = -1;
+        int totalOpenIssues = gitHubRepoList.stream()
+                .mapToInt(GitHubRepo::getOpenIssuesCount)
+                .sum();
 
-        // Duyệt qua từng repo để tổng hợp
-        for (Map<String, Object> repo : repos) {
-            int openIssues = (Integer) repo.get("open_issues_count");
-            int watchers = (Integer) repo.get("watchers_count");
-            totalOpenIssues += openIssues;
+        GitHubRepo maxWatchersRepo = gitHubRepoList.stream()
+                .max(Comparator.comparingInt(GitHubRepo::getWatchersCount))
+                .orElse(null);
 
-            if (watchers > maxWatchers) {
-                maxWatchers = watchers;
-                mostWatchedRepo = repo;
-            }
-        }
+        // Sort List repo để tìm 5 repo update cuối cùng
+        List<GitHubRepo> sortedRepos = gitHubRepoList.stream()
+                .sorted(Comparator.comparing((GitHubRepo r) -> Instant.parse(r.getUpdatedAt())).reversed())
+                .limit(5)
+                .collect(Collectors.toList());
 
-        // ✅ 1. Tổng số open issues
-        System.out.println("Total open issues across all repos: " + totalOpenIssues);
 
-        // ✅ 2. Sắp xếp theo updated_at giảm dần
-        repos.sort((a, b) -> ((String) b.get("updated_at")).compareTo((String) a.get("updated_at")));
-        System.out.println("Top 5 repos sorted by updated_at:");
-        repos.stream().limit(5).forEach(repo ->
-                System.out.println(repo.get("name") + " - " + repo.get("updated_at"))
+        // 1. Tổng số open issues
+        System.out.println("1, Total open issues across all repos: " + totalOpenIssues);
+
+        // 2. Sắp xếp theo updated_at giảm dần
+        System.out.println("2, Top 5 repos sorted by updated_at:");
+        sortedRepos.stream().forEach(repo ->
+                System.out.println(" + " + repo.getName() + " - " + repo.getUpdatedAt())
         );
 
-        // ✅ 3. Repo có nhiều watchers nhất
-        if (mostWatchedRepo != null) {
-            System.out.println("Most watched repo: " + mostWatchedRepo.get("name")
-                    + " with " + mostWatchedRepo.get("watchers_count") + " watchers.");
-        }
-
-        // Assertions
-        assertTrue(totalOpenIssues >= 0, "Total open issues should be >= 0");
-        assertNotNull(mostWatchedRepo, "There should be at least one repo");
+        // 3. Repo có nhiều watchers nhất
+        System.out.println("3, Most watched repo: " + maxWatchersRepo.getName() + " with " + maxWatchersRepo.getWatchersCount() + " watchers.");
     }
 }
