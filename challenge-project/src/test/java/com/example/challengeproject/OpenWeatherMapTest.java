@@ -7,11 +7,13 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class OpenWeatherMapTest extends Base {
-    MainPage mainPage = new MainPage();
+    SearchPage searchPage = new SearchPage();
 
     @BeforeAll
     static void setupClass() {
@@ -32,40 +34,26 @@ public class OpenWeatherMapTest extends Base {
     }
 
     @Test
-    void test() {
+    void testSearch() {
         // Exercise
         driver.get("https://openweathermap.org");
 
-        sendKeys("//div[@class='search-container']/input", "Los Angeles, US");
-        click("//div[@class='search-container']/input");
-        String actual = getText("//div[@class='search-container']/input");
-//// Find search box and search city
-//        WebElement searchBox = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@placeholder='Search city']")));
-//        searchBox.sendKeys("Los Angeles");
-//        WebElement searchButton = driver.findElement(By.xpath("//button[@type='submit']"));
-//        searchButton.click();
-//
-//        // Wait and select "Los Angeles, US" in dropdown
-//        WebElement dropdownOption = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//ul[@class='search-dropdown-menu']//span[text()='Los Angeles, US']")));
-//        dropdownOption.click();
-//
-//        // Wait for weather card to appear
-//        WebElement cityHeader = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='weather-widget']//h2")));
-//
-//        // 1. Verify city name
-//        assertTrue(cityHeader.getText().contains("Los Angeles"), "City name not found");
-//
-//        // 2. Verify current date
-//        String dateString = LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy")); // e.g. May 29, 2025
-//        WebElement dateElement = driver.findElement(By.cssSelector("#weather-widget .current-container .orange-text"));
-//        assertTrue(dateElement.getText().contains(String.valueOf(LocalDate.now().getDayOfMonth())), "Date does not match today");
-//
-//        // 3. Verify temperature is a number
-//        WebElement tempElement = driver.findElement(By.xpath("//div[@id='weather-widget']//span[@class='heading']"));
-//        String tempText = tempElement.getText(); // e.g. "25°C"
-//        assertTrue(Pattern.matches("\\d{1,3}.*", tempText), "Temperature is not a number: " + tempText);
-        // Verify
-        assertEquals("All Developer Tools and Products by JetBrains", actual);
+        String cityNameExpect = "Los Angeles, US";
 
+        sendKeys(SearchPage.INPUT_SEARCH, cityNameExpect);
+        click(SearchPage.BUTTON_SEARCH);
+        click(SearchPage.ITEM_SEARCH_DROPDOWN_MENU_BY_TEXT, cityNameExpect);
+        waitForElementVisible(SearchPage.ITEM_CITY_HEADER_BY_TEXT, cityNameExpect);
+
+        // 1. Verify city name
+        assertEquals("City name not found", "Los Angeles, US", getText(SearchPage.ITEM_CITY_HEADER));
+
+        // 2. Verify current date
+        assertTrue("Date does not match today", getText(SearchPage.ITEM_CITY_DATE).contains(String.valueOf(LocalDate.now().getDayOfMonth())));
+
+        // 3. Verify temperature is a number
+        // e.g. "25°C"
+        String tempText = getText(SearchPage.ITEM_CITY_TEMPERATURE);
+        assertTrue("Temperature is not a number: " + tempText, Pattern.matches("\\d{1,3}.*", tempText));
     }
 }
