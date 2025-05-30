@@ -1,44 +1,36 @@
 package com.example.challengeproject.core;
 
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.*;
+import io.appium.java_client.android.AndroidDriver;
+import org.openqa.selenium.By;
 
 public class Base {
-    protected WebDriver driver;
-    protected WebDriverWait wait;
+    protected AndroidDriver driver;
 
-    public Base(WebDriver driver, WebDriverWait wait) {
+    public Base(AndroidDriver driver) {
         this.driver = driver;
-        this.wait = wait;
     }
 
-    public WebElement findElement(String element, String... value) {
-        if (value != null && element.contains("%")) {
-            element = String.format(element, (Object[]) value);
+    public WebElement findElement(String locator, String... locatorValue) {
+        if (locatorValue != null && locator.contains("%")) {
+            locator = String.format(locator, (Object[]) locatorValue);
         }
-
-        if (element.startsWith("/") || element.startsWith("(")) {
-            return wait.until(ExpectedConditions.elementToBeClickable(By.xpath(element)));
+        if (locator.startsWith("//") ||locator.startsWith("(") ) {
+            return driver.findElement(By.xpath(locator));
         } else {
-            return wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(element)));
+            return driver.findElement(By.id(locator));
         }
     }
 
-    public void click(String element, String... value) {
-        findElement(element, value).click();
+    public void click(String locator, String... locatorValue) {
+        findElement(locator, locatorValue).click();
     }
 
-    public void sendKeys(String element, String text, String... value) {
-        findElement(element, value).sendKeys(text);
+    public void sendKeys(String locator, String text, String... locatorValue) {
+        findElement(locator, locatorValue).sendKeys(text);
     }
 
-    public String getText(String element, String... value) {
-        return findElement(element, value).getText().trim();
-    }
-
-    public void waitForElementVisible(String element, String... value) {
-        if (value != null && value.length > 0)
-            element = String.format(element, (Object[]) value);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(element)));
+    public String getText(String locator, String... locatorValue) {
+        return findElement(locator, locatorValue).getText();
     }
 }

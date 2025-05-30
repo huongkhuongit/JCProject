@@ -1,37 +1,36 @@
 package com.example.challengeproject.core;
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.jupiter.api.*;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
+
+import com.example.challengeproject.Utils.AppiumDriverManager;
+import io.appium.java_client.android.AndroidDriver;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.time.Duration;
+import java.util.logging.Level;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BaseTest {
-    protected WebDriver driver;
-    protected WebDriverWait wait;
-    protected Base base;
+    protected AndroidDriver driver;
 
-    @BeforeAll
-    public void setupClass() {
-        WebDriverManager.chromedriver().setup();
-    }
 
     @BeforeEach
     public void setup() {
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://example.com");
-
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        base = new Base(driver, wait);
+        driver = AppiumDriverManager.getDriver();
+        sleepInSeconds(5);
     }
 
     @AfterEach
     public void tearDown() {
         if (driver != null) {
             driver.quit();
+        }
+    }
+
+    protected static void sleepInSeconds(long sec) {
+        try {
+            Thread.sleep((sec * 1000));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 }

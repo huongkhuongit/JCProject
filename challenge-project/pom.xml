@@ -17,12 +17,11 @@
         <aspectj.version>1.9.22.1</aspectj.version>
         <allure.version>2.29.0</allure.version>
     </properties>
-
     <dependencies>
         <dependency>
-            <groupId>io.github.bonigarcia</groupId>
-            <artifactId>webdrivermanager</artifactId>
-            <version>6.1.0</version>
+            <groupId>io.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <version>7.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -41,30 +40,7 @@
             <version>${aspectj.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.codeborne</groupId>
-            <artifactId>selenide</artifactId>
-            <version>7.6.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-selenide</artifactId>
-            <version>${allure.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.serenity-bdd</groupId>
-            <artifactId>serenity-core</artifactId>
-            <version>4.2.8</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.serenity-bdd</groupId>
-            <artifactId>serenity-junit</artifactId>
-            <version>4.2.8</version>
-            <scope>test</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -106,6 +82,7 @@
             <artifactId>gson</artifactId>
             <version>2.13.1</version>
         </dependency>
+
     </dependencies>
     <build>
         <plugins>
