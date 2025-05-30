@@ -18,7 +18,7 @@ public class AppiumDriverManager {
             caps.setCapability("newCommandTimeout", 300);
             caps.setCapability("autoGrantPermissions", true);
 
-            return new AndroidDriver(new URL("http://localhost:4723/wd/hub"), caps);
+            return new AndroidDriver(new URL("http://localhost:4723"), caps);
         } catch (Exception e) {
             throw new RuntimeException("Failed to start AndroidDriver", e);
         }
