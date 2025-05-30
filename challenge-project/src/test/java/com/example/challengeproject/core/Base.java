@@ -1,16 +1,16 @@
 package com.example.challengeproject.core;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.*;
 
 public class Base {
-    public WebDriver driver;
-    public WebDriverWait wait;
+    protected WebDriver driver;
+    protected WebDriverWait wait;
+
+    public Base(WebDriver driver, WebDriverWait wait) {
+        this.driver = driver;
+        this.wait = wait;
+    }
 
     public WebElement findElement(String element, String... value) {
         if (value != null && element.contains("%")) {
@@ -24,29 +24,21 @@ public class Base {
         }
     }
 
-
-    public void click(String element, String... elementValue) {
-        findElement(element, elementValue).click();
+    public void click(String element, String... value) {
+        findElement(element, value).click();
     }
 
-    public String getText(String element, String... elementValue) {
-        return findElement(element, elementValue).getText().trim();
+    public void sendKeys(String element, String text, String... value) {
+        findElement(element, value).sendKeys(text);
     }
 
-    public void sendKeys(String element, String value, String... elementValue) {
-        findElement(element, elementValue).sendKeys(value);
+    public String getText(String element, String... value) {
+        return findElement(element, value).getText().trim();
     }
 
-    public void waitForPageLoad() {
-        wait.until((ExpectedCondition<Boolean>) wd ->
-                ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete")
-        );
-    }
-
-    public void waitForElementVisible(String element, String... elementValue) {
-        if (elementValue != null)
-            element = String.format(element, elementValue);
+    public void waitForElementVisible(String element, String... value) {
+        if (value != null && value.length > 0)
+            element = String.format(element, (Object[]) value);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(element)));
-
     }
 }
