@@ -8,22 +8,22 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-
 public class Base {
     public WebDriver driver;
     public WebDriverWait wait;
 
     public WebElement findElement(String element, String... value) {
-        if (value != null) {
-            element = String.format(element, value);
+        if (value != null && element.contains("%")) {
+            element = String.format(element, (Object[]) value);
         }
+
         if (element.startsWith("/") || element.startsWith("(")) {
             return wait.until(ExpectedConditions.elementToBeClickable(By.xpath(element)));
         } else {
             return wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(element)));
         }
     }
+
 
     public void click(String element, String... elementValue) {
         findElement(element, elementValue).click();
