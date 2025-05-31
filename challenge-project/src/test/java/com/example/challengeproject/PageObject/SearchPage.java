@@ -4,7 +4,10 @@ import com.example.challengeproject.core.Base;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
@@ -35,7 +38,13 @@ public class SearchPage extends Base {
         assertEquals("City name not found", cityNameExpect, getText(SearchPage.ITEM_CITY_HEADER));
 
         // 2. Verify current date
-        assertTrue("Date does not match today", getText(SearchPage.ITEM_CITY_DATE).contains(String.valueOf(LocalDate.now().getDayOfMonth())));
+        // 2. Lấy ngày hôm nay tại Los Angeles
+        ZoneId laZone = ZoneId.of("America/Los_Angeles");
+        ZonedDateTime nowInLA = ZonedDateTime.now(laZone);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, hh:mma", Locale.ENGLISH);
+        String expectDate = nowInLA.format(formatter).replace("AM", "am").replace("PM", "pm");;
+
+        assertEquals("Date does not match today",expectDate, getText(SearchPage.ITEM_CITY_DATE));
 
         // 3. Verify temperature is a number
         // e.g. "25°C"
