@@ -17,13 +17,6 @@ Mục tiêu của dự án là xây dựng framework kiểm thử tự động h
 
 ## Cài đặt và chạy dự án
 
-### 1. Clone repo và checkout branch `web-ui`
-```bash
-git clone https://github.com/huongkhuongit/JCProject.git
-cd JCProject
-git checkout web-ui
-```
-
 ### 2. Build và chạy test bằng Maven (Terminal)
 Mở terminal tại thư mục gốc của dự án, chạy lệnh sau để build và thực thi tất cả test case:
 ```bash
