@@ -1,0 +1,17 @@
+package api.employee.models;
+
+import com.google.gson.annotations.SerializedName;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ListDepartmentResponse {
+    @SerializedName("result")
+    private ResultListDepartment result;
+    @SerializedName("message")
+    private String message;
+}
+
