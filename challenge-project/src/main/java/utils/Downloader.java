@@ -61,7 +61,8 @@ public class Downloader {
         ProcessBuilder pb = new ProcessBuilder(
                 "yt-dlp",
                 "-f", "bestvideo[height<=720]+bestaudio/best[height<=720]",
-                "-o", outputDir + "/" + videoId + ".%(ext)s",
+                "--merge-output-format", "mp4",
+                "-o", outputDir + "/" + videoId + ".mp4",
                 url
         );
 

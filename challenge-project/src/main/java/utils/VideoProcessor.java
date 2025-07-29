@@ -3,10 +3,10 @@ package utils;
 import java.io.IOException;
 
 public class VideoProcessor {
-
+    private static final String FFMPEG_PATH = "/opt/homebrew/bin/ffmpeg";
     public static void speedUpVideo(String inputFile, String outputFile) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(
-                "ffmpeg", "-i", inputFile,
+                FFMPEG_PATH, "-i", inputFile,
                 "-filter:v", "setpts=PTS/1.09",
                 "-filter:a", "atempo=1.09",
                 "-c:v", "libx264",
