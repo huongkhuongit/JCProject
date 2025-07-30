@@ -1,5 +1,10 @@
 package utils;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -58,7 +63,22 @@ public class Main {
                         new File(inputFile).delete();
 
                         System.out.println("✅ Done: " + id);
+                        // Step 1: Setup ChromeDriver
+                        WebDriverManager.chromedriver().setup();
 
+                        ChromeOptions options = new ChromeOptions();
+                        // Trỏ đến thư mục user data của Chrome
+                        options.addArguments("--user-data-dir=" + System.getProperty("user.home") + "/Library/Application Support/Google/Chrome");
+                        // Dùng đúng profile đã đặt tên là 'tiktok1'
+                        options.addArguments("--profile-directory=Profile 1");
+                        // Bắt buộc nếu bạn dùng Selenium 4+
+                        options.addArguments("--remote-allow-origins=*");
+
+                        // Step 3: Mở trình duyệt với profile
+                        WebDriver driver = new ChromeDriver(options);
+
+                        // Step 4: Điều hướng đến TikTok
+                        driver.get("https://www.tiktok.com/");
                     } catch (Exception e) {
                         System.err.println("❌ Error with ID: " + id);
                         e.printStackTrace();
@@ -70,7 +90,6 @@ public class Main {
             while (!executor.isTerminated()) {
                 Thread.sleep(1000);
             }
-
             System.out.println("\n🎉 All done!");
 
         } catch (Exception e) {
