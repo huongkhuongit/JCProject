@@ -1,12 +1,8 @@
 package tests;
 
 import api.LoginAPI;
-import config.ConfigLoader;
-import core.BaseTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import pages.CommandPage;
-import pages.LoginPage;
 
 public class LoginTest extends BaseTest {
 

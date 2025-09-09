@@ -6,6 +6,9 @@ import org.json.JSONObject;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,16 +20,23 @@ public class Downloader {
         List<String> videoIds = new ArrayList<>();
 
         ProcessBuilder pb = new ProcessBuilder(
-                "yt-dlp", "-j", "--flat-playlist", channelUrl
+                "yt-dlp", "-j", channelUrl
         );
+        // Lấy ngày hiện tại
+        LocalDate today = LocalDate.now();
+
+        // Định dạng ngày thành chuỗi "YYYYMMDD"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String todayString = today.format(formatter);
 
         Process process = pb.start();
-
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 JSONObject obj = new JSONObject(line);
-                videoIds.add(obj.getString("id"));
+                if (obj.getString("upload_date").equals(todayString)){
+                    videoIds.add(obj.getString("id"));
+                }else break;
             }
         }
 
@@ -60,11 +70,13 @@ public class Downloader {
 
         ProcessBuilder pb = new ProcessBuilder(
                 "yt-dlp",
-                "-f", "bestvideo[height<=720]+bestaudio/best[height<=720]",
+                "--no-mtime",
+                "-f", "bestvideo+bestaudio/best",
                 "--merge-output-format", "mp4",
                 "-o", outputDir + "/" + videoId + ".mp4",
                 url
         );
+
 
         pb.inheritIO();  // Log ra console
         Process process = pb.start();

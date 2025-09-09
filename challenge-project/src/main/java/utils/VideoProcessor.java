@@ -3,7 +3,7 @@ package utils;
 import java.io.IOException;
 
 public class VideoProcessor {
-    private static final String FFMPEG_PATH = "/opt/homebrew/bin/ffmpeg";
+    private static final String FFMPEG_PATH = "tools/ffmpeg2611874a50/bin/ffmpeg";
     public static void speedUpVideo(String inputFile, String outputFile) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(
                 FFMPEG_PATH, "-i", inputFile,
